@@ -67,3 +67,4 @@ Built-in health check via `nc -z localhost 4822` (interval: 10s, timeout: 5s, re
 ## License
 
 Apache License 2.0 (same as Apache Guacamole)
+
