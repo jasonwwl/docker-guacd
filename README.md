@@ -29,15 +29,19 @@ This image uses **Debian Bookworm (glibc)** to completely eliminate the issue.
 ## Quick Start
 
 ```bash
+# Latest (1.6.0)
 docker run -d --name guacd -p 4822:4822 wenleigood/guacd-debian:latest
+
+# Specific version
+docker run -d --name guacd -p 4822:4822 wenleigood/guacd-debian:1.5.5
 ```
 
 ## Tags
 
-| Tag | Description |
-|---|---|
-| `latest` | Latest stable build (guacd 1.5.5, FreeRDP 2.11.5) |
-| `1.5.5` | guacd 1.5.5 + FreeRDP 2.11.5 |
+| Tag | guacd | FreeRDP | Notes |
+|---|---|---|---|
+| `latest`, `1.6.0`, `1.6` | 1.6.0 | 2.11.5 | Renderer rewrite (parallel encoding thread pool), Kerberos support |
+| `1.5.5`, `1.5` | 1.5.5 | 2.11.5 | |
 
 ## Supported Protocols
 
@@ -46,10 +50,23 @@ docker run -d --name guacd -p 4822:4822 wenleigood/guacd-debian:latest
 - **SSH** (via libssh2)
 - **Telnet** (via libtelnet)
 
+## Repository Structure
+
+```
+1.5/Dockerfile    # guacd 1.5.5
+1.6/Dockerfile    # guacd 1.6.0
+```
+
+Each version has its own Dockerfile. CI builds all versions in parallel via matrix strategy.
+
 ## Build Locally
 
 ```bash
-docker build -t guacd-debian .
+# Build 1.6.0
+docker build -t guacd-debian:1.6.0 1.6/
+
+# Build 1.5.5
+docker build -t guacd-debian:1.5.5 1.5/
 ```
 
 ### Build Arguments
@@ -57,7 +74,7 @@ docker build -t guacd-debian .
 | Arg | Default | Description |
 |---|---|---|
 | `DEBIAN_VERSION` | `bookworm` | Debian release |
-| `GUACD_VERSION` | `1.5.5` | Apache Guacamole server version |
+| `GUACD_VERSION` | `1.5.5` / `1.6.0` | Apache Guacamole server version |
 | `FREERDP_VERSION` | `2.11.5` | FreeRDP version |
 
 ## Health Check
@@ -67,4 +84,3 @@ Built-in health check via `nc -z localhost 4822` (interval: 10s, timeout: 5s, re
 ## License
 
 Apache License 2.0 (same as Apache Guacamole)
-

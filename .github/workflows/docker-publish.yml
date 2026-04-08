@@ -3,7 +3,6 @@ name: Docker Build & Publish
 on:
   push:
     branches: [main]
-    tags: ['v*']
   pull_request:
     branches: [main]
 
@@ -16,6 +15,22 @@ jobs:
     permissions:
       contents: read
       packages: write
+
+    strategy:
+      matrix:
+        include:
+          - version: '1.5'
+            guacd: '1.5.5'
+            tags: |
+              wenleigood/guacd-debian:1.5.5
+              wenleigood/guacd-debian:1.5
+          - version: '1.6'
+            guacd: '1.6.0'
+            latest: true
+            tags: |
+              wenleigood/guacd-debian:1.6.0
+              wenleigood/guacd-debian:1.6
+              wenleigood/guacd-debian:latest
 
     steps:
       - name: Checkout
@@ -34,24 +49,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.DOCKERHUB_IMAGE }}
-          tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix=
-
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ matrix.version }}
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ matrix.tags }}
+          cache-from: type=gha,scope=${{ matrix.version }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.version }}
