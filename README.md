@@ -16,7 +16,7 @@ This image uses **Debian Bookworm (glibc)** to completely eliminate the issue.
 | | Official (`guacamole/guacd`) | This image (`wenleigood/guacd-debian`) |
 |---|---|---|
 | Base OS | Alpine (musl libc) | Debian Bookworm (glibc) |
-| High-concurrency stability | Segfaults at >50 forks | Stable (tested with 73+ concurrent connections) |
+| High-concurrency stability | Segfaults at >50 forks | Stable (tested with 200+ concurrent connections) |
 | FreeRDP | Source-compiled | Source-compiled (same approach) |
 | NLA authentication | Works | Works (writable home dir for cert storage) |
 
